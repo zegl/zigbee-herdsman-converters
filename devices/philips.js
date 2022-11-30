@@ -192,8 +192,11 @@ const tzLocal = {
         return {
             key: ['colors'],
             convertSet: async (entity, key, value, meta) => {
-                if (value.length !== 5) {
-                    throw new Error(`Expected 5 colors, got ${value.length}`);
+                if (value.length > 5) {
+                    throw new Error(`Expected up to 5 colors, got ${value.length}`);
+                }
+                if (value.length < 1) {
+                    throw new Error(`Expected at least 1 color, got 0`);
                 }
 
                 // For devices where it makes more sense to specify the colors in reverse
@@ -202,7 +205,22 @@ const tzLocal = {
                     value.reverse();
                 }
 
-                const scene = '500104001350000000' + value.map(encodeHexToPoint).join('') + '2800';
+                // The number of colors and segments can technically differ.
+                // If number of colors is less than the number of segments, the colors will repeat.
+                // It seems like the maximum number of colors is 9, and the maximum number of segments is 31.
+                const colors = (value.length << 4).toString(16);
+                const segments = (value.length << 3).toString(16);
+
+                // Encode the colors
+                const colorsPayload = value.map(encodeHexToPoint).join('');
+
+                // Offset of the first color, left shifted 3 bits. 0 means the first segment uses the first color.
+                const offset = '00';
+
+                // Payload length
+                const length = (1+3*(value.length+1)).toString(16);
+
+                const scene = `50010400${length}${colors}000000${colorsPayload}${segments}${offset}`;
                 const payload = {data: Buffer.from(scene, 'hex')};
                 await entity.command('manuSpecificPhilips2', 'multiColor', payload);
             },
