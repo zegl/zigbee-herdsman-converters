@@ -14,34 +14,34 @@ const extendDontUse = require('../lib/extend');
 const extend = {switch: extendDontUse.switch};
 
 const hueExtend = {
-    light_onoff_brightness: (options={}) => ({
+    light_onoff_brightness: (options = {}) => ({
         ...extendDontUse.light_onoff_brightness(options),
         ota: ota.zigbeeOTA,
         meta: {turnsOffAtBrightness1: true},
         toZigbee: extendDontUse.light_onoff_brightness(options).toZigbee.concat([tz.hue_power_on_behavior, tz.hue_power_on_error]),
     }),
-    light_onoff_brightness_colortemp: (options={}) => ({
+    light_onoff_brightness_colortemp: (options = {}) => ({
         ...extendDontUse.light_onoff_brightness_colortemp(options),
         ota: ota.zigbeeOTA,
         meta: {turnsOffAtBrightness1: true},
         toZigbee: extendDontUse.light_onoff_brightness_colortemp(options).toZigbee
             .concat([tz.hue_power_on_behavior, tz.hue_power_on_error]),
     }),
-    light_onoff_brightness_color: (options={}) => ({
+    light_onoff_brightness_color: (options = {}) => ({
         ...extendDontUse.light_onoff_brightness_color({supportsHS: true, ...options}),
         ota: ota.zigbeeOTA,
         meta: {turnsOffAtBrightness1: true},
         toZigbee: extendDontUse.light_onoff_brightness_color({supportsHS: true, ...options}).toZigbee
             .concat([tz.hue_power_on_behavior, tz.hue_power_on_error]),
     }),
-    light_onoff_brightness_colortemp_color: (options={}) => ({
+    light_onoff_brightness_colortemp_color: (options = {}) => ({
         ...extendDontUse.light_onoff_brightness_colortemp_color({supportsHS: true, ...options}),
         ota: ota.zigbeeOTA,
         meta: {turnsOffAtBrightness1: true},
         toZigbee: extendDontUse.light_onoff_brightness_colortemp_color({supportsHS: true, ...options})
             .toZigbee.concat([tz.hue_power_on_behavior, tz.hue_power_on_error]),
     }),
-    light_onoff_brightness_colortemp_color_gradient: (options={}) => ({
+    light_onoff_brightness_colortemp_color_gradient: (options = {}) => ({
         ...extendDontUse.light_onoff_brightness_colortemp_color({supportsHS: true, noConfigure: true, ...options}),
         ota: ota.zigbeeOTA,
         meta: {turnsOffAtBrightness1: true},
@@ -76,7 +76,7 @@ const fzLocal = {
             const button = buttonLookup[msg.data['button']];
             const typeLookup = {0: 'press', 1: 'hold', 2: 'press_release', 3: 'hold_release'};
             const type = typeLookup[msg.data['type']];
-            const direction = msg.data['unknown2'] <127 ? 'right' : 'left';
+            const direction = msg.data['unknown2'] < 127 ? 'right' : 'left';
             const time = msg.data['time'];
             const payload = {};
 
@@ -111,12 +111,20 @@ const fzLocal = {
             cluster: 'manuSpecificPhilips2',
             type: ['attributeReport', 'readResponse'],
             convert: (model, msg, publish, options, meta) => {
+                let res = {};
+
                 if (msg.data.hasOwnProperty('state')) {
                     const input = msg.data['state'].toString('hex');
                     const colors = philips.decodeGradientColors(input, opts);
-                    return {colors};
+                    res = colors;
                 }
-                return {};
+
+                // set color_mode to gradient if the device has more than 1 color
+                if (res.colors && res.colors.length > 1) {
+                    res.color_mode = 'gradient';
+                }
+
+                return res;
             },
         };
     },
