@@ -36,7 +36,7 @@ const hueExtend = {
         if (!options.disableHueEffects) {
             result['toZigbee'] = result['toZigbee'].concat([tzLocal.effect]);
             result['exposes'] = result['exposes'].concat([exposes.enum('effect', ea.SET,
-                ['blink', 'breathe', 'okay', 'channel_change', 'candle', 'finish_effect', 'stop_effect', 'stop_hue_effect'])]);
+                ['blink', 'breathe', 'okay', 'channel_change', 'candle', 'sunrise', 'sparkle', 'finish_effect', 'stop_effect', 'stop_hue_effect'])]);
         }
         return result;
     },
@@ -51,7 +51,7 @@ const hueExtend = {
             result['toZigbee'] = result['toZigbee'].concat([tzLocal.effect]);
             result['exposes'] = result['exposes'].concat([exposes.enum('effect', ea.SET, [
                 'blink', 'breathe', 'okay', 'channel_change',
-                'candle', 'fireplace', 'colorloop',
+                'candle', 'fireplace', 'colorloop', 'sunrise', 'sparkle',
                 'finish_effect', 'stop_effect', 'stop_hue_effect',
             ])]);
         }
@@ -68,7 +68,7 @@ const hueExtend = {
             result['toZigbee'] = result['toZigbee'].concat([tzLocal.effect]);
             result['exposes'] = result['exposes'].concat([exposes.enum('effect', ea.SET, [
                 'blink', 'breathe', 'okay', 'channel_change',
-                'candle', 'fireplace', 'colorloop',
+                'candle', 'fireplace', 'colorloop', 'sunrise', 'sparkle',
                 'finish_effect', 'stop_effect', 'stop_hue_effect',
             ])]);
         }
