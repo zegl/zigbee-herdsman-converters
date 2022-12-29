@@ -36,7 +36,7 @@ const hueExtend = {
         if (!options.disableHueEffects) {
             result['toZigbee'] = result['toZigbee'].concat([tzLocal.effect]);
             result['exposes'] = result['exposes'].concat([exposes.enum('effect', ea.SET,
-                ['blink', 'breathe', 'okay', 'channel_change', 'candle', 'sunrise', 'sparkle', 'finish_effect', 'stop_effect', 'stop_hue_effect'])]);
+                ['blink', 'breathe', 'okay', 'channel_change', 'candle', 'finish_effect', 'stop_effect', 'stop_hue_effect'])]);
         }
         return result;
     },
@@ -51,7 +51,7 @@ const hueExtend = {
             result['toZigbee'] = result['toZigbee'].concat([tzLocal.effect]);
             result['exposes'] = result['exposes'].concat([exposes.enum('effect', ea.SET, [
                 'blink', 'breathe', 'okay', 'channel_change',
-                'candle', 'fireplace', 'colorloop', 'sunrise', 'sparkle',
+                'candle', 'fireplace', 'colorloop',
                 'finish_effect', 'stop_effect', 'stop_hue_effect',
             ])]);
         }
@@ -68,7 +68,7 @@ const hueExtend = {
             result['toZigbee'] = result['toZigbee'].concat([tzLocal.effect]);
             result['exposes'] = result['exposes'].concat([exposes.enum('effect', ea.SET, [
                 'blink', 'breathe', 'okay', 'channel_change',
-                'candle', 'fireplace', 'colorloop', 'sunrise', 'sparkle',
+                'candle', 'fireplace', 'colorloop',
                 'finish_effect', 'stop_effect', 'stop_hue_effect',
             ])]);
         }
@@ -191,19 +191,8 @@ const hueEffects = {
     'candle': '21000101',
     'fireplace': '21000102',
     'colorloop': '21000103',
-    '0103': '21000103',
-    '0104': '21000104',
-    '0105': '21000105',
-    '0106': '21000106',
-    '0107': '21000107',
-    '0108': '21000108',
     'sunrise': '21000109',
     'sparkle': '2100010a',
-    '010b': '2100010b',
-    '010c': '2100010c',
-    '010d': '2100010d',
-    '010e': '2100010e',
-    '010f': '2100010f',
     'stop_hue_effect': '200000',
 };
 
