@@ -243,6 +243,7 @@ const fzLocal = {
             convert: (model, msg, publish, options, meta) => {
                 if (msg.data && msg.data.hasOwnProperty('state')) {
                     const input = msg.data['state'].toString('hex');
+                    meta.logger.warn(`ZEGL decode: ${input}`);
                     const decoded = philips.decodeGradientColors(input, opts);
                     if (decoded.color_mode === 'gradient') {
                         return {gradient: decoded.colors};
