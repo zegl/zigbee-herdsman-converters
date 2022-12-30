@@ -64,6 +64,16 @@ const hueExtend = {
         result['ota'] = ota.zigbeeOTA;
         result['meta'] = {turnsOffAtBrightness1: true};
         result['toZigbee'] = result['toZigbee'].concat([tzLocal.hue_power_on_behavior, tzLocal.hue_power_on_error]);
+        
+        result['fromZigbee'] = result['fromZigbee'].concat([fzLocal.state()]);
+        result['configure'] = async (device, coordinatorEndpoint, logger) => {
+            await extendDontUse.light_onoff_brightness_colortemp_color(options)
+                .configure(device, coordinatorEndpoint, logger);
+            for (const ep of device.endpoints) {
+                await ep.bind('manuSpecificPhilips2', coordinatorEndpoint);
+            }
+        };
+
         if (!options.disableHueEffects) {
             result['toZigbee'] = result['toZigbee'].concat([tzLocal.effect]);
             result['exposes'] = result['exposes'].concat([exposes.enum('effect', ea.SET, [
@@ -248,6 +258,21 @@ const fzLocal = {
                     if (decoded.color_mode === 'gradient') {
                         return {gradient: decoded.colors};
                     }
+                }
+                return {};
+            },
+        };
+    },
+    state: () => {
+        return {
+            cluster: 'manuSpecificPhilips2',
+            type: ['attributeReport', 'readResponse'],
+            convert: (model, msg, publish, options, meta) => {
+                if (msg.data && msg.data.hasOwnProperty('state')) {
+                    const input = msg.data['state'].toString('hex');
+                    meta.logger.warn(`ZEGL decode: ${input}`);
+                    const decoded = philips.decodeGradientColors(input);
+                    return {state: decoded};
                 }
                 return {};
             },
