@@ -31,8 +31,14 @@ const hueExtend = {
         configure: async (device, coordinatorEndpoint, logger) => {
             await extendDontUse.light_onoff_brightness(options)
                 .configure(device, coordinatorEndpoint, logger);
-            for (const ep of device.endpoints) {
-                await ep.bind('manuSpecificPhilips2', coordinatorEndpoint);
+
+            try {
+                for (const ep of device.endpoints) {
+                    await ep.bind('manuSpecificPhilips2', coordinatorEndpoint);
+                }
+            } catch (error) {
+                // Can fail for some devices if running on older firmware
+                // 1.101.2 or later works fine
             }
         },
     }),
@@ -47,8 +53,13 @@ const hueExtend = {
         result['configure'] = async (device, coordinatorEndpoint, logger) => {
             await extendDontUse.light_onoff_brightness_colortemp(options)
                 .configure(device, coordinatorEndpoint, logger);
-            for (const ep of device.endpoints) {
-                await ep.bind('manuSpecificPhilips2', coordinatorEndpoint);
+            try {
+                for (const ep of device.endpoints) {
+                    await ep.bind('manuSpecificPhilips2', coordinatorEndpoint);
+                }
+            } catch (error) {
+                // Can fail for some devices if running on older firmware
+                // 1.101.2 or later works fine
             }
         };
 
@@ -70,8 +81,13 @@ const hueExtend = {
         result['configure'] = async (device, coordinatorEndpoint, logger) => {
             await extendDontUse.light_onoff_brightness_color(options)
                 .configure(device, coordinatorEndpoint, logger);
-            for (const ep of device.endpoints) {
-                await ep.bind('manuSpecificPhilips2', coordinatorEndpoint);
+            try {
+                for (const ep of device.endpoints) {
+                    await ep.bind('manuSpecificPhilips2', coordinatorEndpoint);
+                }
+            } catch (error) {
+                // Can fail for some devices if running on older firmware
+                // 1.101.2 or later works fine
             }
         };
 
@@ -98,8 +114,13 @@ const hueExtend = {
         result['configure'] = async (device, coordinatorEndpoint, logger) => {
             await extendDontUse.light_onoff_brightness_colortemp_color(options)
                 .configure(device, coordinatorEndpoint, logger);
-            for (const ep of device.endpoints) {
-                await ep.bind('manuSpecificPhilips2', coordinatorEndpoint);
+            try {
+                for (const ep of device.endpoints) {
+                    await ep.bind('manuSpecificPhilips2', coordinatorEndpoint);
+                }
+            } catch (error) {
+                // Can fail for some devices if running on older firmware
+                // 1.101.2 or later works fine
             }
         };
 
