@@ -303,7 +303,7 @@ const fzLocal = {
             convert: (model, msg, publish, options, meta) => {
                 if (msg.data && msg.data.hasOwnProperty('state')) {
                     const input = msg.data['state'].toString('hex');
-                    meta.logger.warn(`ZEGL decode: ${meta.options.friendly_name}: ${input}`);
+                    meta.logger.warn(`ZEGL decode: ${input}`);
                     const decoded = philips.decodeGradientColors(input, opts);
                     if (decoded.color_mode === 'gradient') {
                         return {gradient: decoded.colors};
@@ -320,7 +320,8 @@ const fzLocal = {
             convert: (model, msg, publish, options, meta) => {
                 if (msg.data && msg.data.hasOwnProperty('state')) {
                     const input = msg.data['state'].toString('hex');
-                    meta.logger.warn(`ZEGL decode: ${meta.options.friendly_name}: ${input}`);
+                    meta.logger.warn(`ZEGL decode: ${JSON.stringify({msg, meta, model} )}`);
+                    meta.logger.warn(`ZEGL decode: ${input}`);
                     const decoded = philips.decodeGradientColors(input);
                     return {zegl_state: decoded};
                 }
