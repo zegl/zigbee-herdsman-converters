@@ -25,6 +25,16 @@ const hueExtend = {
         toZigbee: extendDontUse.light_onoff_brightness(options).toZigbee.concat([
             tzLocal.hue_power_on_behavior, tzLocal.hue_power_on_error,
         ]),
+        fromZigbee: extendDontUse.light_onoff_brightness(options).toZigbee.concat([
+            fzLocal.state(),
+        ]),
+        configure: async (device, coordinatorEndpoint, logger) => {
+            await extendDontUse.light_onoff_brightness(options)
+                .configure(device, coordinatorEndpoint, logger);
+            for (const ep of device.endpoints) {
+                await ep.bind('manuSpecificPhilips2', coordinatorEndpoint);
+            }
+        },
     }),
     light_onoff_brightness_colortemp: (options={}) => {
         options = {disableHueEffects: true, ...options};
@@ -33,6 +43,15 @@ const hueExtend = {
         result['ota'] = ota.zigbeeOTA;
         result['meta'] = {turnsOffAtBrightness1: true};
         result['toZigbee'] = result['toZigbee'].concat([tzLocal.hue_power_on_behavior, tzLocal.hue_power_on_error]);
+
+        result['configure'] = async (device, coordinatorEndpoint, logger) => {
+            await extendDontUse.light_onoff_brightness_colortemp(options)
+                .configure(device, coordinatorEndpoint, logger);
+            for (const ep of device.endpoints) {
+                await ep.bind('manuSpecificPhilips2', coordinatorEndpoint);
+            }
+        };
+
         if (!options.disableHueEffects) {
             result['toZigbee'] = result['toZigbee'].concat([tzLocal.effect]);
             result['exposes'] = result['exposes'].concat([exposes.enum('effect', ea.SET,
@@ -47,6 +66,15 @@ const hueExtend = {
         result['ota'] = ota.zigbeeOTA;
         result['meta'] = {turnsOffAtBrightness1: true};
         result['toZigbee'] = result['toZigbee'].concat([tzLocal.hue_power_on_behavior, tzLocal.hue_power_on_error]);
+
+        result['configure'] = async (device, coordinatorEndpoint, logger) => {
+            await extendDontUse.light_onoff_brightness_color(options)
+                .configure(device, coordinatorEndpoint, logger);
+            for (const ep of device.endpoints) {
+                await ep.bind('manuSpecificPhilips2', coordinatorEndpoint);
+            }
+        };
+
         if (!options.disableHueEffects) {
             result['toZigbee'] = result['toZigbee'].concat([tzLocal.effect]);
             result['exposes'] = result['exposes'].concat([exposes.enum('effect', ea.SET, [
@@ -64,8 +92,9 @@ const hueExtend = {
         result['ota'] = ota.zigbeeOTA;
         result['meta'] = {turnsOffAtBrightness1: true};
         result['toZigbee'] = result['toZigbee'].concat([tzLocal.hue_power_on_behavior, tzLocal.hue_power_on_error]);
-        
-        result['fromZigbee'] = result['fromZigbee'].concat([fzLocal.state()]);
+
+        // result['fromZigbee'] = result['fromZigbee'].concat([fzLocal.state()]);
+
         result['configure'] = async (device, coordinatorEndpoint, logger) => {
             await extendDontUse.light_onoff_brightness_colortemp_color(options)
                 .configure(device, coordinatorEndpoint, logger);
