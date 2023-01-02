@@ -126,6 +126,7 @@ const hueExtend = {
 
         if (!options.disableHueEffects) {
             result['toZigbee'] = result['toZigbee'].concat([tzLocal.effect]);
+            result['fromZigbee'].push(fzLocal.state({reverse: true}));
             result['exposes'] = result['exposes'].concat([exposes.enum('effect', ea.SET, [
                 'blink', 'breathe', 'okay', 'channel_change',
                 'candle', 'fireplace', 'colorloop',
@@ -143,7 +144,7 @@ const hueExtend = {
             tzLocal.hue_power_on_behavior, tzLocal.hue_power_on_error, tzLocal.effect,
             tzLocal.gradient_scene, tzLocal.gradient({reverse: true}),
         ]);
-        result['fromZigbee'] = result['fromZigbee'].concat([fzLocal.gradient({reverse: true})]);
+        // result['fromZigbee'] = result['fromZigbee'].concat([fzLocal.state({reverse: true})]);
         result['configure'] = async (device, coordinatorEndpoint, logger) => {
             await extendDontUse.light_onoff_brightness_colortemp_color(options)
                 .configure(device, coordinatorEndpoint, logger);
@@ -296,7 +297,7 @@ const fzLocal = {
             return payload;
         },
     },
-    gradient: (opts = {reverse: false}) => {
+    state: (opts = {reverse: false}) => {
         return {
             cluster: 'manuSpecificPhilips2',
             type: ['attributeReport', 'readResponse'],
@@ -305,25 +306,24 @@ const fzLocal = {
                     const input = msg.data['state'].toString('hex');
                     meta.logger.warn(`ZEGL decode: ${input}`);
                     const decoded = philips.decodeGradientColors(input, opts);
+
+                    const ret = {
+                        gradient: [],
+                        effect: null,
+                        zegl_state: decoded,
+                    };
+
+
                     if (decoded.color_mode === 'gradient') {
-                        return {gradient: decoded.colors};
+                        ret.gradient = decoded.colors;
+                        // return {gradient: decoded.colors};
                     }
-                }
-                return {};
-            },
-        };
-    },
-    state: () => {
-        return {
-            cluster: 'manuSpecificPhilips2',
-            type: ['attributeReport', 'readResponse'],
-            convert: (model, msg, publish, options, meta) => {
-                if (msg.data && msg.data.hasOwnProperty('state')) {
-                    const input = msg.data['state'].toString('hex');
-                    meta.logger.warn(`ZEGL decode: ${JSON.stringify({msg, meta, model} )}`);
-                    meta.logger.warn(`ZEGL decode: ${input}`);
-                    const decoded = philips.decodeGradientColors(input);
-                    return {zegl_state: decoded};
+
+                    if (decoded.color_mode === 'xy' && decoded.name !== undefined) {
+                        ret.effect = decoded.name;
+                    }
+
+                    return ret;
                 }
                 return {};
             },
@@ -362,6 +362,9 @@ const tzLocal = {
             } else {
                 return await tz.effect.convertSet(entity, key, value, meta);
             }
+        },
+        convertGet: async (entity, key, meta) => {
+            await entity.read('manuSpecificPhilips2', ['state']);
         },
     },
     hue_power_on_behavior: {
