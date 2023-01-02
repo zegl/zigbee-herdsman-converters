@@ -144,10 +144,7 @@ const hueExtend = {
             tzLocal.hue_power_on_behavior, tzLocal.hue_power_on_error, tzLocal.effect,
             tzLocal.gradient_scene, tzLocal.gradient({reverse: true}),
         ]);
-        // result['fromZigbee'] = result['fromZigbee'].concat([fzLocal.state({reverse: true})]);
         result['configure'] = async (device, coordinatorEndpoint, logger) => {
-            await extendDontUse.light_onoff_brightness_colortemp_color(options)
-                .configure(device, coordinatorEndpoint, logger);
             for (const ep of device.endpoints) {
                 await ep.bind('manuSpecificPhilips2', coordinatorEndpoint);
             }
